@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+command=$(swaymsg -t get_inputs | jq -r '.[] | select(.identifier == "1:1:AT_Translated_Set_2_keyboard") | .xkb_active_layout_name')
+if [[ $command == "English (US)" ]]; then
+	$(eww update en_reveal=true jp_reveal=false)
+elif [[ $command == "Japanese" ]]; then
+	$(eww update en_reveal=false jp_reveal=true)
+fi

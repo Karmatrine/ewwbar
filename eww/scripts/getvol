@@ -1,0 +1,37 @@
+#!/bin/sh
+
+bluetooth_headphones_connected() {
+	pactl list short | grep -iE 'bluez_sink.*headphones|bluez_sink.*earbuds' >/dev/null
+}
+
+get_active_port() {
+	pactl list sinks | awk '/Active Port:/ {print $3}'
+}
+
+volume=$(pactl get-sink-volume @DEFAULT_SINK@ | awk '/front-left:/ {print $5}' | tr -d '%')
+mute=$(pactl get-sink-mute @DEFAULT_SINK@ | awk '{print $2}')
+
+if [ "$mute" = "yes" ]; then
+	echo ""
+	exit
+fi
+
+if bluetooth_headphones_connected; then
+	symbol=""
+elif port=$(get_active_port); then
+	if [ "$port" = "analog-output-headphones" ]; then
+		symbol=" "
+	elif [ "$port" = "analog-output-speaker" ]; then
+		symbol=""
+	else
+		symbol=" "
+	fi
+else
+	symbol="Unknown"
+fi
+
+if [ $volume -lt 51 ]; then
+	echo " $volume$symbol"
+elif [ $volume -ge 51 ]; then
+	echo " $volume$symbol"
+fi

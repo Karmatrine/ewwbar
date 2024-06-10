@@ -1,0 +1,6 @@
+#!/bin/sh
+if [ "$(pactl get-source-mute "easyeffects_source")" = "Mute: yes" ]; then
+  echo ""
+  exit
+fi
+pactl get-source-volume easyeffects_source| awk '/front-left:/ {print $5}' | tr -d '%'

@@ -1,0 +1,40 @@
+#!/bin/bash
+
+get_battery_percentage() {
+	cat /sys/class/power_supply/BAT0/capacity
+}
+
+is_battery_charging() {
+	status=$(cat /sys/class/power_supply/BAT0/status)
+	if [ "$status" == "Charging" ]; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+main() {
+	battery=$(get_battery_percentage)
+
+	if is_battery_charging; then
+		bat=""
+	else
+		bat=""
+	fi
+
+	if [[ $battery -le 100 && $battery -ge 90 ]]; then
+		icon=""
+	elif [[ $battery -lt 90 && $battery -ge 75 ]]; then
+		icon=""
+	elif [[ $battery -lt 75 && $battery -ge 50 ]]; then
+		icon=""
+	elif [[ $battery -lt 50 && $battery -ge 15 ]]; then
+		icon=""
+	else
+		icon=""
+	fi
+
+	echo "$bat $icon $battery"
+}
+
+main
